@@ -1,30 +1,36 @@
-const fs = require('fs');
+import fs from 'fs';
+import bunyan from 'bunyan';
 
 module.exports = class MicroCache {
 
-  constructor(path) {
+  constructor(path, logger = null) {
     this.path = path;
-    // make sure cache path exists, throw error if not
+    if (!logger) {
+      this.log = bunyan.createLogger({name: "micro-cache"});
+    } else {
+      this.log = logger;
+    }
+    // make sure cache path exists: throw error if not
   }
 
   read(query){
     // if exists, read it and return it
-    console.log('reading ' + query);
+    this.log.info(`reading ${query}`);
     return;
     fs.readFile(query, "utf8", function(error, data) {
-      console.log('file ' + data);
-      console.log('error ' + error);
+      this.log.info(`file ${data}`);
+      this.log.info(`error ${error}`);
     });
   }
 
   write(filename, data){
     // save if not found
-    console.log('writing ' + filename + ' to ' + data);
+    this.log.info(`writing ${filename} to ${data}`);
   }
 
-  remove(fileName){
+  remove(filename){
     // if exists, remove it
-    console.log('cleaning ' + fileName);
+    this.log.info(`cleaning ${filename}`);
   }
 
 }
