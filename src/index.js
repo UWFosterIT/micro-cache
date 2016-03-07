@@ -7,6 +7,7 @@ module.exports = class MicroCache {
     this.path = path;
     if (logger) {
       this.log = logger;
+      this.log.name = 'micro-cache';
     } else {
       this.log = bunyan.createLogger({name: 'micro-cache'});
     }
