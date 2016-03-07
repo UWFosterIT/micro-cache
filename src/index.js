@@ -5,32 +5,48 @@ module.exports = class MicroCache {
 
   constructor(path, logger = null) {
     this.path = path;
-    if (!logger) {
-      this.log = bunyan.createLogger({name: "micro-cache"});
-    } else {
+    if (logger) {
       this.log = logger;
+    } else {
+      this.log = bunyan.createLogger({name: "micro-cache"});
     }
-    // make sure cache path exists: throw error if not
   }
 
-  read(query){
-    // if exists, read it and return it
-    this.log.info(`reading ${query}`);
-    return;
-    fs.readFile(query, "utf8", function(error, data) {
-      this.log.info(`file ${data}`);
-      this.log.info(`error ${error}`);
-    });
+  read(filename){
+    let file = this.path + filename;
+    try {
+      this.log.trace(`reading ${file}`);
+      fs.accessSync(file, fs.F_OK);
+      return fs.readFileSync(file, "utf8");
+    } catch (error) {
+      return;
+    }
   }
 
-  write(filename, data){
-    // save if not found
-    this.log.info(`writing ${filename} to ${data}`);
+  write(filename, content, replace = false){
+    let file = this.path + filename;
+    this.log.trace(`writing ${file}`);
+    let flags = replace ? 'w+' : 'wx';
+    try {
+      fs.writeFileSync(file, content, "UTF-8", {'flags': flags});
+      return true;
+    } catch (error) {
+      this.log.fatal(`unable to save to the cache for ${file}`);
+      this.log.fatal(error);
+      throw error;
+    }
   }
 
   remove(filename){
-    // if exists, remove it
-    this.log.info(`cleaning ${filename}`);
+    // don't return an error if you cant remove the file
+    let file = this.path + filename;
+    this.log.trace(`deleting ${file}`);
+    try {
+      fs.unlinkSync(file);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
 }

@@ -1,52 +1,66 @@
 import chai from 'chai';
 import bunyan from 'bunyan';
 import PrettyStream from 'bunyan-prettystream';
-import config from './config';
 import microCache from '../src/index'
 
 global.expect = chai.expect;
 
+// Bunyan stuff
 let prettyStdOut = new PrettyStream();
 prettyStdOut.pipe(process.stdout);
-config.logger = bunyan.createLogger({
+let logger = bunyan.createLogger({
   name: "micro-cache",
   streams: [{
-    level: 'debug',
+    level: 'trace',
     type: 'raw',
     stream: prettyStdOut
   }]
 });
 
+let testFile = { 
+  name: 'scooby-snacks',
+  data: 'Ruh-roh, Raggy'
+}
+
 describe('Cache', function() {
 
   beforeEach(() => {
-    this.cache = new microCache(config.path, config.logger);
+    this.cache = new microCache('test/cache/', logger);
   });
 
   afterEach(() => {
-    // remove all the files
+    this.cache.remove(testFile.name);
   });
 
-  describe('Write', () => {
-    it('should save data to the cache', () => {
-      this.cache.write('filenameyo', 'test');
-      expect(1).to.equal(2);
+  describe('Write new', () => {
+    it('should save data to the cache and overwrite existing', () => {
+      let wrote = this.cache.write(testFile.name, testFile.data);
+      expect(wrote).to.equal(true);
+    });
+  });
+
+  describe('Write existing', () => {
+    it('should save data to the cache only for new files', () => {
+      let wrote = this.cache.write(testFile.name, testFile.data);
+      wrote = this.cache.write(testFile.name, testFile.data, true);
+      expect(wrote).to.equal(true);
     });
   });
 
   describe('Read', () => {
     it('should read data from the cache', () => {
-      this.cache.write('filenameyo', 'test');
-      let data = this.cache.read('filenameyo');
-      expect(1).to.equal(2);
+      this.cache.write(testFile.name, testFile.data, true);
+      let data = this.cache.read(testFile.name);
+      expect(data).to.equal(testFile.data);
     });
   });
 
   describe('Remove', () => {
     it('should remove files from the cache', () => {
-      this.cache.write('filenameyo', 'test');
-      this.cache.remove('uy');
-      expect(1).to.equal(2);
+      let wrote = this.cache.write(testFile.name, testFile.data);
+      expect(wrote).to.equal(true);
+      let deleted = this.cache.remove(testFile.name);
+      expect(deleted).to.equal(true);
     });
   });
 });
