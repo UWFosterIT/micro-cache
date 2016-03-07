@@ -9,7 +9,7 @@ Have a directory that you want to read and write to
 
     mkdir cache
 
-Now implement this module in your script.  See ``test/index.js`` for full implementation.  You can pass a Bunyan logger as the second param to the new ``MicroCache``.
+Now implement this module in your script.  See ``test/index.js`` for full implementation. This uses ``winston`` for logging, you can run this as ``LOG_LEVEL=debug node index.js`` for get full output. 
 
 ```JavaScript
 import MicroCache from 'micro-cache';

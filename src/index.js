@@ -1,22 +1,26 @@
 import fs from 'fs';
-import bunyan from 'bunyan';
+import winston from 'winston';
 
 module.exports = class MicroCache {
 
-  constructor(path, logger = null) {
+  constructor(path, logLevel = 'info') {
     this.path = path;
-    if (logger) {
-      this.log = logger;
-      this.log.name = 'micro-cache';
-    } else {
-      this.log = bunyan.createLogger({name: 'micro-cache'});
-    }
+    winston.loggers.add('micro-cache', {
+      console: {
+        colorize:    true,
+        label:       'micro-cache',
+        level:       logLevel,
+        prettyPrint: true
+      }
+    });
+
+    this.log = winston.loggers.get('micro-cache');
   }
 
   read(filename) {
     let file = this.path + filename;
     try {
-      this.log.trace(`reading ${file}`);
+      this.log.debug(`reading ${file}`);
       fs.accessSync(file, fs.F_OK);
       return fs.readFileSync(file, 'utf8');
     } catch (error) {
@@ -26,21 +30,21 @@ module.exports = class MicroCache {
 
   write(filename, content, replace = false) {
     let file = this.path + filename;
-    this.log.trace(`writing ${file}`);
+    this.log.debug(`writing ${file}`);
     let flags = replace ? 'w+' : 'wx';
     try {
       fs.writeFileSync(file, content, 'UTF-8', {'flags': flags});
       return true;
     } catch (error) {
-      this.log.fatal(`unable to save to the cache for ${file}`);
-      this.log.fatal(error);
+      this.log.debug(`unable to save to the cache for ${file}`);
+      this.log.debug(error);
       throw error;
     }
   }
 
   remove(filename) {
     let file = this.path + filename;
-    this.log.trace(`deleting ${file}`);
+    this.log.debug(`deleting ${file}`);
     try {
       fs.unlinkSync(file);
       return true;
