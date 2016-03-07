@@ -8,27 +8,27 @@ module.exports = class MicroCache {
     if (logger) {
       this.log = logger;
     } else {
-      this.log = bunyan.createLogger({name: "micro-cache"});
+      this.log = bunyan.createLogger({name: 'micro-cache'});
     }
   }
 
-  read(filename){
+  read(filename) {
     let file = this.path + filename;
     try {
       this.log.trace(`reading ${file}`);
       fs.accessSync(file, fs.F_OK);
-      return fs.readFileSync(file, "utf8");
+      return fs.readFileSync(file, 'utf8');
     } catch (error) {
       return;
     }
   }
 
-  write(filename, content, replace = false){
+  write(filename, content, replace = false) {
     let file = this.path + filename;
     this.log.trace(`writing ${file}`);
     let flags = replace ? 'w+' : 'wx';
     try {
-      fs.writeFileSync(file, content, "UTF-8", {'flags': flags});
+      fs.writeFileSync(file, content, 'UTF-8', {'flags': flags});
       return true;
     } catch (error) {
       this.log.fatal(`unable to save to the cache for ${file}`);
@@ -37,8 +37,7 @@ module.exports = class MicroCache {
     }
   }
 
-  remove(filename){
-    // don't return an error if you cant remove the file
+  remove(filename) {
     let file = this.path + filename;
     this.log.trace(`deleting ${file}`);
     try {
@@ -48,5 +47,4 @@ module.exports = class MicroCache {
       return false;
     }
   }
-
-}
+};

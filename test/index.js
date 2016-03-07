@@ -1,7 +1,7 @@
 import chai from 'chai';
 import bunyan from 'bunyan';
 import PrettyStream from 'bunyan-prettystream';
-import microCache from '../src/index'
+import MicroCache from '../src/index';
 
 global.expect = chai.expect;
 
@@ -9,23 +9,23 @@ global.expect = chai.expect;
 let prettyStdOut = new PrettyStream();
 prettyStdOut.pipe(process.stdout);
 let logger = bunyan.createLogger({
-  name: "micro-cache",
+  name:    'micro-cache',
   streams: [{
-    level: 'trace',
-    type: 'raw',
+    level:  'trace',
+    type:   'raw',
     stream: prettyStdOut
   }]
 });
 
-let testFile = { 
+let testFile = {
   name: 'scooby-snacks',
   data: 'Ruh-roh, Raggy'
-}
+};
 
-describe('Cache', function() {
+describe('Cache', function () {
 
   beforeEach(() => {
-    this.cache = new microCache('test/cache/', logger);
+    this.cache = new MicroCache('test/cache/', logger);
   });
 
   afterEach(() => {
