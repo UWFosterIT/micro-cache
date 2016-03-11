@@ -1,5 +1,6 @@
-import fs from 'fs';
+import fs      from 'fs';
 import winston from 'winston';
+import sha1    from 'sha1';
 
 module.exports = class MicroCache {
 
@@ -18,7 +19,7 @@ module.exports = class MicroCache {
   }
 
   read(filename) {
-    let file = this.path + filename;
+    let file = this.path + sha1(filename);
     try {
       this.log.debug(`reading ${file}`);
       fs.accessSync(file, fs.F_OK);
@@ -29,7 +30,7 @@ module.exports = class MicroCache {
   }
 
   write(filename, content, replace = false) {
-    let file = this.path + filename;
+    let file = this.path + sha1(filename);
     this.log.debug(`writing ${file}`);
     let flags = replace ? 'w+' : 'wx';
     try {
@@ -43,7 +44,7 @@ module.exports = class MicroCache {
   }
 
   remove(filename) {
-    let file = this.path + filename;
+    let file = this.path + sha1(filename);
     this.log.debug(`deleting ${file}`);
     try {
       fs.unlinkSync(file);

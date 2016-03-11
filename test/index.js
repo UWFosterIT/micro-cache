@@ -1,5 +1,5 @@
 import chai from 'chai';
-import MicroCache from '../src/index';
+import MicroCache from '../lib/node/index';
 
 global.expect = chai.expect;
 

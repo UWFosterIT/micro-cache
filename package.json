@@ -1,6 +1,6 @@
 {
   "name": "micro-cache",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A minimal local synchronous file system cache",
   "author": "Marc Miles",
   "license": "MIT",
@@ -23,6 +23,7 @@
     "url": "https://github.com/UWFosterIT/micro-cache/issues"
   },
   "dependencies": {
+    "sha1": "^1.1.1",
     "winston": "^2.2.0"
   },
   "devDependencies": {
@@ -36,7 +37,7 @@
   },
   "scripts": {
     "build": "./node_modules/.bin/babel --presets es2015 -d lib/node src --source-maps inline",
-    "test": "./node_modules/.bin/mocha --bail --reporter dot --compilers js:babel-register test/index.js; exit 0"
+    "test": "npm run build && ./node_modules/.bin/mocha --bail --reporter dot --compilers js:babel-register test/index.js; exit 0"
   },
   "engines": {
     "node": ">= v0.12.0"
