@@ -4,8 +4,9 @@ import sha1    from 'sha1';
 
 module.exports = class MicroCache {
 
-  constructor(path, logLevel = 'info') {
+  constructor(path, logLevel = 'info', ext = '') {
     this.path = path;
+    this.fileExt = ext;
     winston.loggers.add('micro-cache', {
       console: {
         colorize:    true,
@@ -18,8 +19,12 @@ module.exports = class MicroCache {
     this.log = winston.loggers.get('micro-cache');
   }
 
-  read(filename) {
-    let file = this.path + sha1(filename);
+  _file(name) {
+    return this.path + sha1(name) + this.fileExt;
+  }
+
+  read(name) {
+    let file = this._file(name);
     try {
       this.log.debug(`reading ${file}`);
       fs.accessSync(file, fs.F_OK);
@@ -29,8 +34,8 @@ module.exports = class MicroCache {
     }
   }
 
-  write(filename, content, replace = false) {
-    let file = this.path + sha1(filename);
+  write(name, content, replace = false) {
+    let file = this._file(name);
     this.log.debug(`writing ${file}`);
     let flags = replace ? 'w+' : 'wx';
     try {
@@ -43,11 +48,10 @@ module.exports = class MicroCache {
     }
   }
 
-  remove(filename) {
-    let file = this.path + sha1(filename);
-    this.log.debug(`deleting ${file}`);
+  remove(name) {
+    this.log.debug(`deleting ${this._file(name)}`);
     try {
-      fs.unlinkSync(file);
+      fs.unlinkSync(this._file(name));
       return true;
     } catch (error) {
       return false;

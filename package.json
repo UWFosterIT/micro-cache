@@ -1,6 +1,6 @@
 {
   "name": "micro-cache",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A minimal local synchronous file system cache",
   "author": "Marc Miles",
   "license": "MIT",

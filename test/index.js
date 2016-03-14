@@ -13,7 +13,7 @@ let level = process.env.LOG_LEVEL || 'info';
 describe('Cache', function () {
 
   beforeEach(() => {
-    this.cache = new MicroCache('test/cache/', level);
+    this.cache = new MicroCache('test/cache/', level, '.json');
   });
 
   afterEach(() => {
