@@ -1,17 +1,14 @@
-import chai from 'chai';
-import MicroCache from '../lib/node/index';
+const { expect } = require('chai');
+const MicroCache = require('../src/index');
 
-global.expect = chai.expect;
-
-let testFile = {
+const testFile = {
   name: 'scooby-snacks',
-  data: 'Ruh-roh, Raggy'
+  data: 'Ruh-roh, Raggy',
 };
 
-let level = process.env.LOG_LEVEL || 'info';
+const level = process.env.LOG_LEVEL || 'info';
 
-describe('Cache', function () {
-
+describe('Cache', () => {
   beforeEach(() => {
     this.cache = new MicroCache('test/cache/', level, '.json');
   });
@@ -22,7 +19,7 @@ describe('Cache', function () {
 
   describe('Write new', () => {
     it('should save data to the cache and overwrite existing', () => {
-      let wrote = this.cache.write(testFile.name, testFile.data);
+      const wrote = this.cache.write(testFile.name, testFile.data);
       expect(wrote).to.equal(true);
     });
   });
@@ -38,16 +35,23 @@ describe('Cache', function () {
   describe('Read', () => {
     it('should read data from the cache', () => {
       this.cache.write(testFile.name, testFile.data, true);
-      let data = this.cache.read(testFile.name);
+      const data = this.cache.read(testFile.name);
       expect(data).to.equal(testFile.data);
+    });
+  });
+
+  describe('Read Non-existent file', () => {
+    it('should not error', () => {
+      const data = this.cache.read(testFile.name);
+      expect(data).to.equal(undefined);
     });
   });
 
   describe('Remove', () => {
     it('should remove files from the cache', () => {
-      let wrote = this.cache.write(testFile.name, testFile.data);
+      const wrote = this.cache.write(testFile.name, testFile.data);
       expect(wrote).to.equal(true);
-      let deleted = this.cache.remove(testFile.name);
+      const deleted = this.cache.remove(testFile.name);
       expect(deleted).to.equal(true);
     });
   });
